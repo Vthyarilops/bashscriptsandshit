@@ -1,0 +1,151 @@
+#!/bin/bash
+# Ask if the user would like to set timezone, and locale to Canadian Eastern Time, set hwclock to UTC
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to set Locale to en_CA.UTF-8 and set clock to Eastern Time?"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""	
+			read TL
+		if [ $TL = y -o $TL = Y -o $TL = yes ]
+			then
+				ln -sf /usr/share/zoneinfo/American/Toronto /etc/localtime
+				sed -i 's/^#en_CA\.UTF/en_CA\.UTF/' /etc/locale.gen
+				locale-gen
+				hwclock --systohc --utc
+		elif [ $TL = n -o $TL = N -o $TL = no ] 
+			then
+				echo "Skipping setting locale and clock"
+	fi
+# Ask if user wants to set hostname
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to set a Hostname for you?"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""	
+			read HN
+		if [ $HN = y -o $HN = Y -o $HN = yes ] 
+			then
+				echo "Please Enter your Hostname and hit Return"
+					read nNn
+						echo "$nNn" > /etc/hostname
+		elif [ $HN = n -o $HN = N -o $HN = no ]
+			then
+				echo "Skipped setting Hostname"
+	fi
+# Ask if user would like to set a root password
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to set a Root password?"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""	
+			read Rt
+		if [ $Rt = y -o $Rt = Y -o $Rt = yes ]
+			then
+				while true; do
+				    read -s -p "Root password: " PASSWORD
+				echo
+				    read -s -p "Confirm password: " PASSWORD2
+				echo
+				    [ "$PASSWORD" = "$PASSWORD2" ] && break
+				    echo "Passwords don't match. Try again"
+				done
+				echo "root:$PASSWORD" | chpasswd
+				echo "Root password set"
+		elif [ $Rt = n -o $Rt = N -o $Rt = no ]
+			then
+				echo "Skipped setting Root password"
+	fi
+# Asks if user would like to make a user account (non-root ofc)
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to make a user account for you? Default shell is BASH"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""	
+			read USR
+		if [ $USR = y -o $USR = Y -o $USR = yes ] 
+			then
+				pacman -S sudo
+				echo "Please input a username (only lower case letters), and hit Return."
+					read UNU
+						useradd -m -G wheel -s /bin/bash $UNU
+						echo " Please Set a User password"
+						while true; do
+						    read -s -p "User password: " PASSWORD3
+						echo
+						    read -s -p "Confirm password: " PASSWORD4
+						echo
+						    [ "$PASSWORD3" = "$PASSWORD4" ] && break
+						    echo "Passwords don't match. Try again"
+						done
+						echo $UNU:$PASSWORD3 | chpasswd
+						echo "User created and Password set, default shell is BASH, adding to sudoers file"
+						sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+		if [ $USR = n -o $USR = N -o $USR = no ]
+			then
+				echo "Skipped creating User account"
+	fi
+# Asks if user wants to install GRUB bootloader, UEFI or BIOS version, or none at all
+                        echo "";echo ""
+			echo "#######################################################################################"
+			echo "#"
+			echo "#     Would you like me to install GRUB bootloader to harddrive. For UEFI systems"
+			echo "#     EFI partition must be Mounted to /boot before running this"
+			echo "#"
+			echo "#   1) GRUB + OS-Prober 32/64-bit BIOS/MBR (default)"
+			echo "#   2) GRUB + OS-Prober 32-bit UEFI/GPT"
+			echo "#   3) GRUB + OS-Prober 64-bit UEFI/GPT"
+			echo "#   4) Skip Installing GRUB"
+			echo "#"
+			echo "#                             Please enter your selection, then hit Return"
+			echo "######################################################################################"
+			echo "";echo ""
+				read PRB
+			if [ $PRB = 1 -o $PRB = y -o $PRB = Y ] 
+				then
+					pacman -S grub os-prober
+					echo "Please Enter Path to HDD ie. /dev/sda and hit Return"
+						read P11
+							grub-install --target=i386-pc --recheck $P11
+							grub-mkconfig -o /boot/grub/grub.cfg
+							echo "Grub should be functional now"
+			elif [ $PRB = 2 -o $PRB = 32 -o $PRB = 32-bit ]
+				then
+					pacman -S grub os-prober
+					echo "Please Enter Path to HDD ie. /dev/sda and hit Return"
+						read P12
+			            	pacman -S dosfstools efibootmgr grub os-prober
+			            	grub-install --target=i386-efi --efi-directory=/boot --bootloader-id=arch_grub --recheck
+							grub-mkconfig -o /boot/grub/grub.cfg
+							echo "Grub should be functional now"		
+			elif [ $PRB = 3 -o $PRB = uefi -o $PRB = UEFI ]
+					then
+				pacman -S dosfstools efibootmgr grub os-prober
+				grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=arch_grub --recheck
+				grub-mkconfig -o /boot/grub/grub.cfg
+				echo "Grub should be functional now"		
+			elif [ $PRB = 4 -o $PRB = n -o $PRB = N ] 
+				then
+					echo "Skipped GRUB install"
+	fi
+# Ending Arch installer script here for now
+		elif [ $archin = n -o $archin = N -o $archin = no ] 
+			then
+				echo "Skipping Arch installer script"
+	fi
+exit

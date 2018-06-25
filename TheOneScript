@@ -1,0 +1,478 @@
+#!/bin/bash
+# Massive pile of tweaks and automation, for personal use to speed up installation of Linux distributions.
+# Author : Wolfe 
+# July 19th 2017, use at your own risk, no warranty
+#
+# Check which Distro it is running on, Most tweaks are optimized on Linux Mints 18/Ubuntu and should work on Debian
+        echo "";echo ""
+	echo "#######################################################################################"
+	echo "#"
+	echo "#     Please choose from the list the distribution you are running this script on."
+	echo "#"
+	echo "#   1) Debian, Ubuntu and derivatives"
+	echo "#   2) Arch, Arch derivatives"
+	echo "#   3) RHEL, Fedora, CentOS and derivatives"
+	echo "#   4) Quit installation"
+	echo "#"
+	echo "#                             Please enter your selection, then hit Return"
+	echo "######################################################################################"
+	echo "";echo ""
+read res
+##########################################################################################################################################
+# This is the Start of Tweaks if Debian/Ubuntu and other derivatives is selected, most were tested of Mint 18.1 or Ubuntu 14.04/16.04
+     if [ $res = 1 -o $res = Debian -o $res = debian ] 
+        then 
+# Ask if the user would like to fetch Zsh and Zsh Syntax Highlighting through apt-get (might want to sudo apt-get update first)
+		echo "";echo ""
+         	echo "######################################################################################"
+		echo "#"
+		echo "#    Would you like me to to automatically install zsh and required files from Apt?"
+		echo "#"
+		echo "#                     Please type Y/N, and hit Return"
+		echo "######################################################################################"
+		echo "";echo ""
+	read apr
+  		 if [ $apr = Y -o $apr = y -o $apr = yes ] 
+  		    then
+  			echo "Installing ZSH, Zsh syntax highlighting"
+			sudo apt-get -y install zsh zsh-doc zsh-syntax-highlighting
+ 		elif [ $apr = n -o $apr = N -o $apr = no ]
+ 		     then
+        		echo "Skipped installing Zsh and Zsh-Syntax-Highlighting"
+ 	fi
+# Asks the user if they would like to install a better zsh config (Config from Manjaro linux) i adapted it for Linux Mint
+		echo "";echo ""
+         	echo "####################################################################################"
+		echo "#"
+		echo "#    Would you like me to to install the Zsh config from Manjaro modified"
+		echo "#  for Ubuntu, should work on derivatives, It also installs zsh-autosuggestions"
+		echo "#    cloned from https://github.com/zsh-users/zsh-autosuggestions into ~/.zsh"
+		echo "#"
+		echo "#"
+		echo "#                     Please type Y/N, and hit Return"
+		echo "####################################################################################"
+		echo "";echo ""
+	read ap0
+  		 if [ $ap0 = Y -o $ap0 = y -o $ap0 = yes ] 
+  		    then
+  			echo "Installed zsh-autosuggestions and manjaro like config"
+	# Original zsh configuration from https://github.com/Chrysostomus/manjaro-zsh-config
+	# Making a backup of zshrc and bashrc (just to be safe, script doesn't touch bashrc anyways)
+	if [ -e ~/.bashrc ] 
+	   then 
+	  cp ~/.bashrc ~/onescript/backup/backup.bashrc
+	  echo ".bashrc found, backing up"
+	elif [ -e ~/.zshrc ]
+	    then 
+	  cp ~/.zshrc ~/onescript/backup/backup.zshrc
+	  echo ".zshrc found, backing up"
+	else 
+	   echo "No .zshrc or .bashrc found"
+	fi
+	# The redundant chmoding is just incase sudo acts funny, you might need to rerun some sudo commands with su - instead
+	 # chmod a+x ~/onescript/base16-shell/*
+	 # cp ~/onescript/manjaro.zshrc ~/.zshrc
+	 # sudo mkdir -p /usr/share/zsh/scripts
+	 # sudo cp -r ~/onescript/base16-shell /usr/share/zsh/scripts
+	 # sudo chmod a+x /usr/share/zsh/scripts/base16-shell/*
+	 # sudo cp ~/onescript/rootzshrc /root/.zshrc
+     git clone https://github.com/chriskempson/base16-shell.git /usr/share/zsh/scripts/base16-shell
+	# Copy zsh auto suggestions cloned from https://github.com/zsh-users/zsh-autosuggestions
+	  if [ -d ~/.zsh/zsh-autosuggestions ]
+	    then :
+	  else
+	   mkdir ~/.zsh
+	   #cp -r ~/onescript/zsh-autosuggestions ~/.zsh
+        git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+	 fi
+ 		elif [ $ap0 = n -o $ap0 = N -o $ap0 = no ]
+ 		     then
+        		echo "Skipped changing zshrc config and installing zsh-autosuggestions"
+ 	
+#############--------End of Ubuntu Tweaks----------#######################################################################################
+	fi
+##########################################################################################################################################
+# Reserved for Arch specific Tweaks in the future			
+# Experimental Arch install script meant to be used after Partitions are formatted and mounted from CD/USB, note the device locations
+    elif [ $res = 2 -o $res = Arch -o $res = arch ]									  		 #
+      then  		
+		echo "";echo ""
+         	echo "####################################################################################"
+		echo "#"
+		echo "#   Welcome to the (kinda) experimental Arch tweaks, please refer to "
+		echo "#   the README file contained with this script, this is an install"
+		echo "#   script it assumes root partition has been formatted and mounted and"
+		echo "#   an internet connection is established, it will install Arch to /mnt "
+		echo "#       If your OS is already installed, skip this"
+		echo "#"
+		echo "#"
+		echo "#                     Please type Y/N, and hit Return"
+		echo "####################################################################################"
+		echo "";echo ""
+	read archin
+# Setting up NTP to avoid Time Warps with certificates
+		if [ $archin = Y -o $archin = y -o $archin = yes ]
+			then
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to set NTP to synchronize the clock?"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""
+	read ntpon
+		if [ $ntpon = Y -o $ntpon = y -o $ntpon = yes ]
+			then 
+				timedatectl set-ntp true
+				echo "NTP activated, Sync to Internet successful."
+		elif [ $ntpon = n -o $ntpon = N -o ntpon = no ]
+			then 
+				echo "Skipped activating NTP"	
+	fi
+# Asking if user would like to refresh pacman keys to avoid certificate errors
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to Refresh pacman keys?"
+		echo "#"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""			
+			read PAK
+		if [ $PAK = y -o $PAK = Y -o $PAK = yes ] 
+			then 
+				pacman -Sy archlinux-keyring && pacman-key --init && pacman-key --populate archlinux && pacman-key --refresh-keys
+				echo "pacman keys appear to be refreshed"
+		elif [ $PAK = n -o $PAK = N -o $PAK = no ]
+			then 
+				echo "Skipped refreshing pacman keys"		
+	fi
+# Asks to install base system or base system + developer base (to use AUR)
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to install the Base+Developer Base (to use the AUR)?"
+		echo "#"
+		echo "#     1) Base + developer base (Default)"
+		echo "#	    2) Base system only"
+		echo "#     3) Skip installing base system"
+		echo "#"
+		echo "#                                Please enter your selection and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""		
+			read BS
+		if [ $BS = 1 -o $BS = y -o $BS = Y ] 
+			then 
+				echo "Installing base base-devel"
+				pacstrap -i /mnt base base-devel
+		elif [ $BS = 2 -o $BS = base -o $BS = BASE ]
+			then	
+				echo "Installing base"
+				pacstrap -i /mnt base
+		elif [ $BS = 3 -o $BS = n -o $BS = N ]
+			then
+				echo "Skipped installing Arch base system"		
+	fi
+# Generate FSTAB with UUID of hdd, if need be use lsblk -f and nano /mnt/etc/fstab to correct it if it fucks up
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to Generate an FSTAB from UUID of hard drive?"
+		echo "#   running this multiple times will make multiple entries, so...Don't do it lol"
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""		
+			read FB
+		if [ $FB = y -o $FB = Y -o $FB = yes ] 
+			then
+				echo "Generating FSTAB from UUID"
+				genfstab -U -p /mnt >> /mnt/etc/fstab
+		elif [ $FB = n -o $FB = N -o $FB = no ]
+			then
+				echo "Skipped generating FSTAB"
+	fi
+# Enter Chroot
+		echo "";echo ""
+		echo "#####################################################################################################"
+		echo "#	"
+		echo "#   Would you like me to CHROOT into install?"
+		echo "#   "
+		echo "#"
+		echo "#                                Please type Y/N, and hit Return"
+		echo "#####################################################################################################"
+		echo "";echo ""		
+                read DILD
+		if [ $DILD = y -o $DILD = Y -o $DILD = yes ] 
+            then
+                cp OneScriptChroot /mnt/ && chmod 755 /mnt/OneScriptChroot && cd /mnt
+                echo "Entering Chroot environment"    
+                arch-chroot /mnt ./OneScriptChroot
+         elif [ $DILD = n -o $DILD = N -o $DILD = no ] 
+                then
+                    echo "Skipping Chroot, note next steps will not work without chroot"
+    fi       
+# Ask if the user would like to set timezone, and locale to Canadian Eastern Time, set hwclock to UTC
+# Ask's the user if they would like to reboot now
+		echo "";echo ""
+		echo "################################################################"
+		echo "#"		
+ 		echo "#        Would you like to reboot into your new install?"
+		echo "#   		Reboot now?"
+		echo "#"
+		echo "#			   Please type Y/N, and hit Return"
+		echo "################################################################"
+		echo "";echo ""
+	read abC
+		  if [ $abC = Y -o $abC = y -o $abC = yes ] 
+			 then
+				echo "Restarting"
+  reboot
+
+		 elif [ $abC = n -o $abC = N -o $abC = no ]
+		      then
+		        :
+	 fi
+
+fi
+# ZSH tweak for Arch, please run this as a regular user with sudo permissions (because it doesn't use full paths, etc)
+		echo "";echo ""
+         	echo "####################################################################################"
+		echo "#"
+		echo "#    Would you like me to to install the Zsh config from Manjaro modified"
+		echo "#  for Arch, should work on derivatives, It also installs zsh-autosuggestions"
+		echo "#    cloned from https://github.com/zsh-users/zsh-autosuggestions into ~/.zsh"
+		echo "#   and zsh-syntax-highlighting, please run as sudo user not root"
+		echo "#"
+		echo "#                     Please type Y/N, and hit Return"
+		echo "####################################################################################"
+		echo "";echo ""
+	read ZsZ
+  		 if [ $ZsZ = Y -o $ZsZ = y -o $ZsZ = yes ] 
+  		    then
+			sudo pacman -S zsh zsh-syntax-highlighting
+  			echo "Installed zsh-autosuggestions and manjaro like config"
+	# Original zsh configuration from https://github.com/Chrysostomus/manjaro-zsh-config
+	# Making a backup of zshrc and bashrc (just to be safe, script doesnt touch bashrc anyways)
+	if [ -e ~/.bashrc ] 
+	   then 
+	  cp ~/.bashrc ~/onescript/backup/backup.bashrc
+	  echo ".bashrc found, backing up"
+	elif [ -e ~/.zshrc ]
+	    then 
+	  cp ~/.zshrc ~/onescript/backup/backup.zshrc
+	  echo ".zshrc found, backing up"
+	else 
+	   echo "No .zshrc or .bashrc found"
+	fi
+	# The redundant chmoding is just incase sudo acts funny, you might need to rerun some sudo commands with su - instead
+	  chmod a+x ~/onescript/base16-shell/*
+	  cp ~/onescript/manjaro.zshrc.arch ~/.zshrc
+   if [ -d /usr/share/zsh/scripts ] 
+     then :
+	else
+	  sudo mkdir -p /usr/share/zsh/scripts
+	fi
+	  sudo cp -r ~/onescript/base16-shell /usr/share/zsh/scripts
+	  sudo chmod a+x /usr/share/zsh/scripts/base16-shell/*
+	  sudo cp ~/onescript/rootzshrc /root/.zshrc
+	# Copy zsh autosuggestions cloned from https://github.com/zsh-users/zsh-autosuggestions
+	  if [ -d ~/.zsh/zsh-autosuggestions ]
+	    then :
+	  else
+	   mkdir ~/.zsh
+	   cp -r ~/onescript/zsh-autosuggestions ~/.zsh
+	 fi
+ 		elif [ $ZsZ = n -o $ZsZ = N -o $ZsZ = no ]
+ 		     then
+        		echo "Skipped changing zshrc config and installing zsh-autosuggestions"
+	fi
+##########################################################################################################################################
+# Reserved for Fedora/RHEL Tweaks in the future									            		 #
+    elif [ $res = 3 -o $res = RHEL -o $res = Fedora -o $res = fedora -o $res = rhel ]					    		 #
+       then														    		 #
+   	echo "RHEL/Fedora/Centos chosen, apt not present, continuing"									 #
+																	 #
+    elif [ $res = 4 -o $res = q -o $res = quit -o $res = exit ] 									 #
+ 	then exit 0																 #
+						    		 									 #
+     fi															    		 #
+##########################################################################################################################################
+# Asks if the user would like to lower the Swap value (Debian is 60 by default) to 10, provides speed increase on lower end computers 
+echo "";echo ""
+echo "#####################################################################################################"
+echo "#	"
+echo "#  Would you like me to lower swap value to 10, and use HDPARM to check and optimize for SSD?"
+echo "#  PS. If HDPARM find a SSD, it will add noatime to fstab and make Swap=1"
+echo "#  If you have a SSD that it detects, PLEASE DO NOT RUN THIS MULTIPLE TIMES!!!"
+echo "#  There is a chance it could damage fstab by adding multiple entries of noatime"
+echo "#"
+echo "#                                Please type Y/N, and hit Return"
+echo "#####################################################################################################"
+echo "";echo ""
+	read ap5
+  		 if [ $ap5 = Y -o $ap5 = y -o $ap5 = yes ] 
+  		    then
+# May 29th, 2017, script by Wolfe
+# This script needs to run as sudo/root as it works in root directories
+# Using the scripts "backup" folder to backup fstab, ntp, sysctl.conf to ~/onescript/backup
+cp /etc/sysctl.conf ~/onescript/backup
+cp /etc/fstab ~/onescript/backup
+cp /etc/default/ntp ~/onescript/backup
+fi
+# Changes Swappiness from default to 10 for HDD or 1 for SSD (that is if hdparm finds TRIM support on sda)
+if grep -Fq "vm.swappiness=10" /etc/sysctl.conf
+  then  :
+elif grep -Fq "vm.swappiness=" /etc/sysctl.conf
+  then sudo sed -i -e 's/vm.swappiness=.*/vm.swappiness=10/g' /etc/sysctl.conf 
+   else 
+sudo echo '#Setting swap to more sane level' >> /etc/sysctl.conf
+sudo echo 'vm.swappiness=10' >> /etc/sysctl.conf
+fi
+if sudo hdparm -I /dev/sda | grep TRIM
+  then sudo sed -i -e 's/vm.swappiness=10/vm.swappiness=1/g' /etc/sysctl.conf
+  echo "SSD detected as sda swap set to 1"
+else
+  echo "SSD not detected as sda swap set to 10"
+ fi
+# Adds noatime to /etc/fstab if hdparm reported TRIM and swappiness is set to 1
+if grep -Fq "noatime,errors=remount-ro" /etc/fstab
+  then :
+elif grep -Fxq "vm.swappiness=1" /etc/sysctl.conf
+  then sudo sed -i "s:errors=remount:noatime,errors=remount:g" /etc/fstab
+  else :
+ fi
+	 if [ $ap5 = n -o $ap5 = N -o $ap5 = no ]
+ 		     then
+        		echo "Skipped Lowering Swap, and possibly modifying fstab for SSD"
+ 		fi
+# Ask if user wants to disable IPv6, This is because i have problems resolving IPv6 names locally for some odd reason
+		echo "";echo ""
+		echo "###################################################################"
+		echo "#"
+     		echo "#         Would you like me to Disable IPv6?"
+		echo "#"
+		echo "#		 	   Please type Y/N, and hit Return"
+		echo "###################################################################"
+		echo "";echo ""
+	read a22
+		if [ $a22 = Y -o $a22 = y -o $a22 = yes ]
+			then
+    hhgst=$( cat /proc/sys/net/ipv6/conf/all/disable_ipv6 < /dev/null )
+        if [ $hhgst -eq 1 ]
+     then
+  			echo "IPv6 is already disabled"
+	else
+        	 echo "net.ipv6.conf.all.disable_ipv6 = 1
+        	 net.ipv6.conf.default.disable_ipv6 = 1
+        	 net.ipv6.conf.lo.disable_ipv6 = 1" | sudo tee /etc/sysctl.d/99-my-disable-ipv6.conf
+			echo "IPv6 Disabled may require reboot to take affect"   
+				fi    
+ 		if [ $res = 1 -o $res = Debian -o $res = debian ] 
+        		then 
+ 			sudo service procps reload
+				fi
+                   		elif [ $a22 = n -o $a22 = N -o $a22 = no ]
+			then 
+	 			echo "Skipped disabling IPv6"
+	fi
+# Asks if user would like to disable IPv6 for Network Time Protocol, had problems resolving names with IPv6
+	echo "";echo ""
+	echo "###########################################################"
+	echo "#"
+	echo "#    Would you like me to Disable IPv6 for NTP?"
+	echo "#"
+	echo "#"	
+	echo "#			   Please type Y/N, and hit Return"
+	echo "###########################################################"
+	echo "";echo ""
+		read q22
+			if [ $q22 = Y -o $q22 = y -o $q22 = yes ]
+ 				then
+			if grep -Fxq "NTPD_OPTS='-g'" /etc/default/ntp
+ 				 then
+ 			   sudo sed -i -e 's/-g/-4 -g/g' /etc/default/ntp
+				else
+			  echo "/etc/default/ntp doesn't contain the correct string, edit manually or ignore"
+				 fi	
+		elif [ $q22 = n -o $q22 = N -o $q22 = no ]
+		then 
+ 			echo "Skipped disabling IPv6 for NTP."	
+	fi
+# Asks if user would like to make zsh default shell, User needs to input name (without any capitol letters)	
+		echo "";echo ""	
+  		echo "############################################################"
+		echo "#"		
+ 		echo "#  Would you like me to change your default shell to Zsh?"
+		echo "#  Please make sure Zsh is installed before running this."
+		echo "#"
+		echo "#"
+		echo "#			   Please type Y/N, and hit Return"
+		echo "############################################################"
+		echo "";echo ""
+	read roo
+		  if [ $roo = Y -o $roo = y -o $roo = yes ] 
+			 then
+				echo "";echo ""
+				echo "###########################################################################"
+				echo "#"
+				echo "#  DO NOT use capitol letters, and make sure to input the correct username"
+				echo "#  Please input your username to auto run (sudo chsh USERNAME -s /bin/zsh)"
+				echo "#"
+				echo "############################################################################"
+				echo "";echo ""
+			read rrr
+			  sudo chsh $rrr -s /bin/zsh
+		 elif [ $roo = n -o $roo = N -o $roo = no ]
+		      then
+		        echo "Leaving user's default shell as is."
+	 fi
+
+# Ask if user would like to enable ufw and allow connections on LAN
+		echo "";echo ""
+		echo "################################################################"
+		echo "#"		
+ 		echo "#     Would you like to turn on UFW and enable LAN"
+		echo "#     Turn on Firewall and allow 192.168.1.0/24?"
+		echo "#"
+		echo "#			   Please type Y/N, and hit Return"
+		echo "################################################################"
+		echo "";echo ""
+	read abb
+		  if [ $abb = Y -o $abb = y -o $abb = yes ] 
+			 then
+				if [ $res = 2 -o $res = Arch -o $res = arch ] 	
+					then
+				sudo pacman -S ufw
+			fi			
+				echo "UFW configured"
+     			sudo ufw enable
+			sudo ufw allow from 192.168.1.0/24 to 192.168.1.0/24
+		 elif [ $abb = n -o $abb = N -o $abb = no ]
+		      then
+		        echo "Skipped configuring UFW"
+	 fi
+# Script asking if user would like to reboot 
+		echo "";echo ""
+		echo "################################################################"
+		echo "#"		
+ 		echo "#        Some changes may need a reboot"
+		echo "#   		Reboot now?"
+		echo "#"
+		echo "#			   Please type Y/N, and hit Return"
+		echo "################################################################"
+		echo "";echo ""
+	read abc
+		  if [ $abc = Y -o $abc = y -o $abc = yes ] 
+			 then
+				echo "Restarting"
+  reboot
+
+		 elif [ $abc = n -o $abc = N -o $abc = no ]
+		      then
+		        :
+	 fi
+exit
