@@ -1,0 +1,2 @@
+#!/bin/bash
+youtube-dl -4 -f best -citw -v $1
