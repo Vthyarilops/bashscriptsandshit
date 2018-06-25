@@ -1,0 +1,148 @@
+#!/bin/bash
+# A simple bash wrapper for pacman.
+# Author: Josh Glendenning (Thanks for the error logging functions)
+# This was originally licences under the MIT license which it remains under
+
+
+# MIT License
+#
+# Copyright (c) 2017 Josh Glendenning
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+
+# Modified much later by Vthyarilops....some random person
+# This is a wrapper for Pacman so you can use Debian like commands
+function log_info {
+    echo "$(tput setaf 4)$1$(tput sgr0)" >&2
+}
+function log_warn {
+    echo "$(tput setaf 3)$1$(tput sgr0)" >&2
+}
+function log_error {
+    echo "$(tput setaf 1)ERROR:$(tput sgr0) $1" >&2
+}
+
+
+function display_help {
+cat <<EOS
+Usage: apt [options] <command> <args>...
+  apt install <package>
+  apt search <package>
+  apt remove <package>
+  apt update [args]...
+  apt upgrade [args]...
+  apt clean [args]...
+  apt autoclean [args]...
+Options:
+  -h | --help		Show this screen.
+  -v | --verbose 	Display the command to be passed through.
+
+EOS
+}
+
+
+CMD='pacman'
+# Try to detect if we are root
+if [ "$(whoami)" != "root" ]; then
+	use_sudo=true
+fi
+
+# Match any [options]
+while :
+do
+	case "$1" in
+		-h | --help)
+			display_help  # Call your function
+			# no shifting needed here, we're done.
+			exit 0
+			;;
+		-v | --verbose)
+			verbose=true
+			shift
+			;;
+		--dry-run)
+			dry_run=true
+			shift
+			;;
+		--) # End of all options
+			shift
+			break
+			;;
+		-*)
+			log_error "Unknown option: $1"
+			break
+			;;
+		*)  # No more options
+			break
+			;;
+	esac
+done
+
+# Update the $CMD if user_sudo is enabled
+if [ "$use_sudo" = true ] ; then
+	CMD="sudo $CMD"
+fi
+
+case "$1" in
+	'install')
+		shift
+		CMD_ARGS="-S $@"
+		;;
+	'update')
+		shift
+		CMD_ARGS="-Syy $@"
+		;;
+    'upgrade')
+        shift
+        CMD_ARGS="-Syu $@"
+        ;;
+	'remove')
+		shift
+		CMD_ARGS="-Rs $@"
+		;;
+	'search')
+		shift
+		CMD_ARGS="-Ss $@"
+		;;
+	'autoclean')
+		shift
+		CMD_ARGS="-Sc $@"
+		;;
+	'clean')
+		shift
+		CMD_ARGS="-Scc $@"
+		;;
+    *)
+		log_error "Unknown command: $1"
+		exit 1
+        ;;
+	esac
+
+# echo the whole command if verbose is enabled
+if [ "$verbose" = true ]; then
+	log_info "=> $(tput sgr0)$CMD $CMD_ARGS"
+fi
+
+# Call the command
+if [ "$dry_run" = true ]; then
+	echo "$CMD $CMD_ARGS"
+else
+	$CMD $CMD_ARGS
+fi
