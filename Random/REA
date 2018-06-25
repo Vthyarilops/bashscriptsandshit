@@ -1,0 +1,1 @@
+This contains mostly shorctus that could be made into aliases the reason I have them as scripts is so they are shell agnostic and can be used in any shell without having to edit the respecive .rc
