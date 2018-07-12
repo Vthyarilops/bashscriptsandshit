@@ -1,0 +1,165 @@
+#!/bin/bash
+
+# This was made to start a Fluidsynth SF2 based Sound server
+# it's purpose was for MIDI playback in Rosegarden without a hardware synth.
+
+function log_info {
+    echo "$(tput setaf 4)$1$(tput sgr0)" >&2
+}
+function log_warn {
+    echo "$(tput setaf 3)$1$(tput sgr0)" >&2
+}
+function log_error {
+    echo "$(tput setaf 1)ERROR:$(tput sgr0) $1" >&2
+}
+
+
+function display_help {
+cat <<EOS
+Usage: fluidserver [options]  <args>
+
+  fluidserver magic      -   Magic    Soundfont
+  fluidserver fluidgm    -   Fluid-GM Soundfont
+  fluidserver fluidgs    -   Fluid-GS Soundfont
+  fluidserver general    -   General  Soundfont
+  fluidserver timidity   -   Timidity Soundfont
+  fluidserver arachno    -   Arachno  Soundfont
+  fluidserver chorium    -   Chorium  Soundfont
+  fluidserver omega      -   Omega-GM Soundfont
+  fluidserver princess   -   Princess Soundfont
+  fluidserver 32mb       -   32Mb-GM  Soundfont
+  fluidserver sf4u       -   SF4U-GM  Soundfont
+  fluidserver hqorch     -   HQ-Orch  Soundfont
+  fluidserver heaven     -   Heaven   Soundfont
+  fluidserver muse       -   Muse2    Soundfont
+  fluidserver sonatina   -   Sonatina Soundfont
+  fluidserver sc55       -   SC-55    Soundfont
+  fluidserver sc88       -   SC-88    Soundfont
+
+Options:
+  -h | --help		Show this screen.
+  -v | --verbose 	Display the command to be passed through.
+
+EOS
+}
+
+CMD='fluidsynth --server --audio-driver=jack'
+# Match any [options]
+while :
+do
+	case "$1" in
+		-h | --help)
+			display_help  # Call your function
+			# no shifting needed here, we're done.
+			exit 0
+			;;
+		-v | --verbose)
+			verbose=true
+			shift
+			;;
+		--dry-run)
+			dry_run=true
+			shift
+			;;
+		--) # End of all options
+			shift
+			break
+			;;
+		-*)
+			log_error "Unknown option: $1"
+			break
+			;;
+		*)  # No more options
+			break
+			;;
+	esac
+done
+case "$1" in
+	    'magic')
+	    	shift
+		    CMD_ARGS="/usr/share/sounds/sf2/MagicSFver2.sf2 "
+		    ;;
+	    'fluidgm')
+		    shift
+	    	CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GM.sf2 "
+		    ;;
+	    'timidity')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/TimGM6mb.sf2 "
+            ;;
+	    'fluidgs')
+	        shift
+	        CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GS.sf2 "
+	        ;;
+	    'general')
+	        shift
+	        CMD_ARGS="/usr/share/sounds/sf2/GeneralUserGS_1471.sf2 "
+            ;;
+        'arachno')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/Arachno.sf2 "
+            ;;
+        'chorium')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/Chorium.sf2 "
+            ;;
+        'omega')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/Omega.sf2 "
+            ;;
+        'princess')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/Princess.sf2 "
+            ;;
+        '32mb')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/32Mb.sf2 "
+            ;;
+        'sf4u')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/Sf4UGM.sf2 "
+            ;;
+        'hqorch')
+            shift
+            CMD_ARGS="/usr/share/sounds/sf2/HQOrchestra.sf2 "
+            ;;
+	'heaven')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Heaven.sf2 "
+		;;
+	'muse')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Musescore2.sf2 "
+		;;
+	'sonatina')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Sonatina.sf2 "
+		;;
+	'sc55')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Roland_SC-55.sf2 "
+		;;
+	'sc88')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Roland_SC-88.sf2 "
+		;;
+
+	 *)
+		    log_error "Unknown command: $1"
+		   exit 1
+        ;;
+	esac
+
+# echo the whole command if verbose is enabled
+if [ "$verbose" = true ]; then
+	log_info "=> $(tput sgr0)$CMD $CMD_ARGS "$@""
+fi
+
+# Call the command
+if [ "$dry_run" = true ]; then
+	echo "$CMD $CMD_ARGS "$@"" 
+else
+	$CMD $CMD_ARGS "$@"
+fi
+
+exit
