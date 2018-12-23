@@ -12,7 +12,7 @@ These have there own respective licences, my portition of the script is under th
 
 
 --------------------------------------------Use-------------------------------------------------------
-For general use just install git and as a regular user (non root) "cd ~/ && git clone https://github.com/Vthyarilops/onescript && cd onescript && ./TheOneScript" for the Arch linux install script, git clone to any directory after root partition has been mounted, cd to directory, and run as normal. It will automatically copy the OneScriptChroot to /mnt and execute it inside a chroot, once completed (ik reboot doesn't work correctly) if you want ZSH config use general use steps (ie. clone to home folder, skip Arch installer step ofc)
+For general use just install git and as a regular user (non root) "cd ~/ && wget https://github.com/Vthyarilops/bashscriptsandshit/releases/download/0.1/onescript.tar.gz && tar xvf onescript.tar.gz && cd onescript && ./TheOneScript" for the Arch linux install script, download to any directory after root partition has been mounted, cd to directory, and run as normal. It will automatically copy the OneScriptChroot to /mnt and execute it inside a chroot, once completed if you want ZSH config use general use steps (ie. clone to home folder, skip Arch installer step ofc)
 
 
 --------------------------------------------IMPORTANT-------------------------------------------------
@@ -20,9 +20,6 @@ For general use just install git and as a regular user (non root) "cd ~/ && git 
 
  You must place the folder "onescript" in you home directory and run the file "TheOneScript"
 
- to run the file open a terminal type :      "cd ~/onescript"
-                                             "chmod 755 TheOneScript"   (or "chmod +x TheOneScript")
-                                             "./TheOneScript" 
  you may be prompted for your root password
 
 -------------------------------------------------------------------------------------------------------
@@ -54,8 +51,6 @@ Make sure you run it as a regular user (it uses sudo permissions) or the other t
     3 - establish an internet connection (use "ping www.google.ca" to test it) ("ip link" to list devices and "dhcpcd" followed 
         by device number to use wired connection) ie. dhcpcd enp8s7
 
-    4 - Get install script to your pc, ie. mkdir /mnt/usbd2 && mount /dev/sdg1 /mnt/usbd2 && cd /mnt/usbd2 
-
-    5 - if its untarred, just excecute the script, otherwise use "tar xvf filename.tar.gz" and cd to it
+    4 - Get install script to your pc untar and execute it, ie. cd /mnt && wget https://github.com/Vthyarilops/bashscriptsandshit/releases/download/0.1/onescript.tar.gz && tar xvf onescript.tar.gz && cd onescript && ./TheOneScript
 
     Thats it, if you don't understand any of this, Arch probably wouldn't be a good OS for you anyways.
