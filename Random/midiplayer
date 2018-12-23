@@ -15,28 +15,38 @@ function display_help {
 cat <<EOS
 Usage: midiplayer [options]  <args> <file>
 
-  midiplayer magic    <file.mid> Magic    Soundfont
-  midiplayer fluidgm  <file.mid> Fluid-GM Soundfont
-  midiplayer fluidgs  <file.mid> Fluid-GS Soundfont
-  midiplayer general  <file.mid> General  Soundfont
-  midiplayer timidity <file.mid> Timidity Soundfont
-  midiplayer arachno  <file.mid> Arachno  Soundfont
-  midiplayer chorium  <file.mid> Chorium  Soundfont
-  midiplayer omega    <file.mid> Omega-GM Soundfont
-  midiplayer princess <file.mid> Princess Soundfont
-  midiplayer 32mb     <file.mid> 32Mb-GM  Soundfont
-  midiplayer sf4u     <file.mid> SF4U-GM  Soundfont
-  midiplayer hqorch   <file.mid> HQ-Orch  Soundfont
-  midiplayer heaven   <file.mid> Heaven   Soundfont
-  midiplayer muse     <file.mid> Muse2    Soundfont
-  midiplayer sonatina <file.mid> Sonatina Soundfont
-  midiplayer sc55     <file.mid> SC-55    Soundfont
-  midiplayer sc88     <file.mid> SC-88    Soundfont
+  midiplayer magic    <file.mid> Magic        Soundfont
+  midiplayer fluidgm  <file.mid> Fluid-GM     Soundfont
+  midiplayer fluidgs  <file.mid> Fluid-GS     Soundfont
+  midiplayer general  <file.mid> General      Soundfont
+  midiplayer timidity <file.mid> Timidity     Soundfont
+  midiplayer arachno  <file.mid> Arachno      Soundfont
+  midiplayer chorium  <file.mid> Chorium      Soundfont
+  midiplayer omega    <file.mid> Omega-GM     Soundfont
+  midiplayer princess <file.mid> Princess     Soundfont
+  midiplayer 32mb     <file.mid> 32Mb-GM      Soundfont
+  midiplayer sf4u     <file.mid> SF4U-GM      Soundfont
+  midiplayer hqorch   <file.mid> HQ-Orch      Soundfont
+  midiplayer heaven   <file.mid> Heaven       Soundfont
+  midiplayer muse     <file.mid> Muse2        Soundfont
+  midiplayer sblive   <file.mid> SB Live!     Soundfont
+  midiplayer musyng   <file.mid> Musyng       Soundfont
+  midiplayer sonatina <file.mid> Sonatina     Soundfont
+  midiplayer sc55     <file.mid> SC-55        Soundfont
+  midiplayer sc55-alt <file.mid> SC-55(2)     Soundfont
+  midiplayer sc88     <file.mid> SC-88        Soundfont
+  midiplayer airfont  <file.mid> Airfont      Soundfont
+  midiplayer 16.5mb   <file.mid> 16.5MB       Soundfont
+  midiplayer evan2    <file.mid> Evanessence2 Soundfont
+  midiplayer sonivox  <file.mid> SONiVOX GS   Soundfont
+  midiplayer yamXG    <file.mid> Yamaha XG    Soundfont
+  midiplayer sf2  <file.sf2>  <file.mid>      Manually
 
 Options:
   -h | --help		Show this screen.
   -v | --verbose 	Display the command to be passed through.
-
+  --dry-run             Display the command without running it.
+  
 EOS
 }
 
@@ -56,6 +66,10 @@ do
 			;;
 		--dry-run)
 			dry_run=true
+			shift
+			;;
+		-L | --local-sf2)
+			local_sf2=true
 			shift
 			;;
 		--) # End of all options
@@ -140,6 +154,42 @@ case "$1" in
 		shift
 		CMD_ARGS="/usr/share/sounds/sf2/Roland_SC-88.sf2 "
 		;;
+	'sblive')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/8MBSBLive.sf2 "
+		;;
+	'musyng')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Musyng.sf2 "
+		;;
+	'sc55-alt')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/ALT_Roland_SC-55.sf2 "
+		;;
+	'airfont')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/airfont380.sf2 "
+		;;
+	'16.5mb')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/16.5mb-GM-GS-MT32.sf2 "
+		;;
+	'evan2')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/Evanessence2.sf2 "
+		;;
+	'sonivox')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/SONiVOX_GS250.sf2 "
+		;;
+	'yamXG')
+		shift
+		CMD_ARGS="/usr/share/sounds/sf2/yamahaXG.sf2 "
+		;;
+	'sf2')
+		shift
+		CMD_ARGS="$1"
+		;;
 
 	 *)
 		    log_error "Unknown command: $1"
@@ -158,5 +208,7 @@ if [ "$dry_run" = true ]; then
 else
 	$CMD $CMD_ARGS "$@"
 fi
+
+
 
 exit

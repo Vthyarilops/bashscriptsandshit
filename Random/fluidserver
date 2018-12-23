@@ -18,23 +18,34 @@ function display_help {
 cat <<EOS
 Usage: fluidserver [options]  <args>
 
-  fluidserver magic      -   Magic    Soundfont
-  fluidserver fluidgm    -   Fluid-GM Soundfont
-  fluidserver fluidgs    -   Fluid-GS Soundfont
-  fluidserver general    -   General  Soundfont
-  fluidserver timidity   -   Timidity Soundfont
-  fluidserver arachno    -   Arachno  Soundfont
-  fluidserver chorium    -   Chorium  Soundfont
-  fluidserver omega      -   Omega-GM Soundfont
-  fluidserver princess   -   Princess Soundfont
-  fluidserver 32mb       -   32Mb-GM  Soundfont
-  fluidserver sf4u       -   SF4U-GM  Soundfont
-  fluidserver hqorch     -   HQ-Orch  Soundfont
-  fluidserver heaven     -   Heaven   Soundfont
-  fluidserver muse       -   Muse2    Soundfont
-  fluidserver sonatina   -   Sonatina Soundfont
-  fluidserver sc55       -   SC-55    Soundfont
-  fluidserver sc88       -   SC-88    Soundfont
+  fluidserver magic      -   Magic        Soundfont
+  fluidserver fluidgm    -   Fluid-GM     Soundfont
+  fluidserver fluidgs    -   Fluid-GS     Soundfont
+  fluidserver general    -   General      Soundfont
+  fluidserver timidity   -   Timidity     Soundfont
+  fluidserver arachno    -   Arachno      Soundfont
+  fluidserver chorium    -   Chorium      Soundfont
+  fluidserver omega      -   Omega-GM     Soundfont
+  fluidserver princess   -   Princess     Soundfont
+  fluidserver 32mb       -   32Mb-GM      Soundfont
+  fluidserver sf4u       -   SF4U-GM      Soundfont
+  fluidserver hqorch     -   HQ-Orch      Soundfont
+  fluidserver heaven     -   Heaven       Soundfont
+  fluidserver muse       -   Muse2        Soundfont
+  fluidserver sonatina   -   Sonatina     Soundfont
+  fluidserver sc55       -   SC-55        Soundfont
+  fluidserver sc88       -   SC-88        Soundfont
+  fluidserver sblive     -   SB Live!     Soundfont
+  fluidserver musyng     -   Musyng       Soundfont
+  fluidserver sc55-alt   -   SC-55(2)     Soundfont
+  fluidserver airfont    -   Airfont      Soundfont
+  fluidserver 16.5mb     -   16.5MB       Soundfont
+  fluidserver evan2      -   Evanessence2 Soundfont
+  fluidserver sonivox    -   SONiVOX GS   Soundfont
+  fluidserver yamXG      -   Yamaha XG    Soundfont
+
+  fluidserver sf2 <file.sf2> Manually Choose SF2
+
 
 Options:
   -h | --help		Show this screen.
@@ -143,7 +154,42 @@ case "$1" in
 		shift
 		CMD_ARGS="/usr/share/sounds/sf2/Roland_SC-88.sf2 "
 		;;
-
+        'sblive')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/8MBSBLive.sf2 "
+                ;;
+        'musyng')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/Musyng.sf2 "
+                ;;
+        'sc55-alt')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/ALT_Roland_SC-55.sf2 "
+                ;;
+        'airfont')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/airfont380.sf2 "
+                ;;
+        '16.5mb')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/16.5mb-GM-GS-MT32.sf2 "
+                ;;
+        'evan2')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/Evanessence2.sf2 "
+                ;;
+        'sonivox')
+                shift
+                CMD_ARGS="/usr/share/sounds/sf2/SONiVOX_GS250.sf2 "
+                ;;
+        'yamXG')
+                shift
+                CMD_ARGS=/usr/share/sounds/sf2/yamahaXG.sf2 "
+                ;;
+        'sf2')
+                shift
+                CMD_ARGS="$1"
+                ;;
 	 *)
 		    log_error "Unknown command: $1"
 		   exit 1
