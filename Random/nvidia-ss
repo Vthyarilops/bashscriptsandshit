@@ -1,4 +1,6 @@
 #!/bin/bash
+# This Script uses Nvidia-settings to temporarly swap primary <> secondary
+# Monitors, I use it to change games from my TV to my Monitor without permanantly changing it
 function log_info {
     echo "$(tput setaf 4)$1$(tput sgr0)" >&2
 }
@@ -12,7 +14,7 @@ function log_error {
 
 function display_help {
 cat <<EOS
-Usage: keyrepeat [options]
+Usage: nvidia-ss [options]
 
 nvidia-ss on
 nvidia-ss off
