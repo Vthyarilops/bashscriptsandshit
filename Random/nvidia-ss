@@ -1,0 +1,94 @@
+#!/bin/bash
+function log_info {
+    echo "$(tput setaf 4)$1$(tput sgr0)" >&2
+}
+function log_warn {
+    echo "$(tput setaf 3)$1$(tput sgr0)" >&2
+}
+function log_error {
+    echo "$(tput setaf 1)ERROR:$(tput sgr0) $1" >&2
+}
+
+
+function display_help {
+cat <<EOS
+Usage: keyrepeat [options]
+
+nvidia-ss on
+nvidia-ss off
+nvidia-ss dev <dev-id>
+
+Options:
+  -h | --help		Show this screen.
+  -v | --verbose 	Display the command to be passed through.
+
+EOS
+}
+
+
+CMD='nvidia-settings -a'
+
+# Match any [options]
+while :
+do
+	case "$1" in
+		-h | --help)
+			display_help  # Call your function
+			# no shifting needed here, we're done.
+			exit 0
+			;;
+		-v | --verbose)
+			verbose=true
+			shift
+			;;
+		--dry-run)
+			dry_run=true
+			shift
+			;;
+		--) # End of all options
+			shift
+			break
+			;;
+		-*)
+			log_error "Unknown option: $1"
+			break
+			;;
+		*)  # No more options
+			break
+			;;
+	esac
+done
+
+
+case "$1" in
+	'on')
+		shift
+		CMD_ARGS="XineramaInfoOrder=DFP-3 $@"
+		;;
+	'off')
+		shift
+		CMD_ARGS="XineramaInfoOrder=DFP-1 $@"
+		;;
+	'dev')
+		shift
+		CMD_ARGS="XineramaInfoOrder=$2 $@"
+		;;
+     *)
+		log_error "Unknown command: $1"
+		exit 1
+        ;;
+	esac
+
+# echo the whole command if verbose is enabled
+if [ "$verbose" = true ]; then
+	log_info "=> $(tput sgr0)$CMD $CMD_ARGS"
+fi
+
+# Call the command
+if [ "$dry_run" = true ]; then
+	echo "$CMD $CMD_ARGS"
+else
+	$CMD $CMD_ARGS
+fi
+
+
