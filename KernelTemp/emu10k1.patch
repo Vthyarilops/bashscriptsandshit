@@ -1,0 +1,13 @@
+--- emu10k1.c	2016-01-10 18:01:32.000000000 -0500
++++ emu10k1.c.fix	2019-03-22 13:20:49.215266924 -0400
+@@ -123,8 +123,8 @@
+ 		return err;
+ 	if (max_buffer_size[dev] < 32)
+ 		max_buffer_size[dev] = 32;
+-	else if (max_buffer_size[dev] > 1024)
+-		max_buffer_size[dev] = 1024;
++	// else if (max_buffer_size[dev] > 1024)
++		// max_buffer_size[dev] = 1024;
+ 	if ((err = snd_emu10k1_create(card, pci, extin[dev], extout[dev],
+ 				      (long)max_buffer_size[dev] * 1024 * 1024,
+ 				      enable_ir[dev], subsystem[dev],

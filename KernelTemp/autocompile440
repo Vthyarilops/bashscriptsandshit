@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Explain controls
+
+echo "";echo ""; echo "Please use y/yes n/no and hit enter to choose options";echo "";echo ""
+
+# Ask user if they want to compile the kernel
+
+echo "Would you like to compile the latest 4.4.0 kernel with SB Live! Patches?"
+read com
+      if [ $com = y -o $com = yes ] 
+        then
+
+
+        # Get to temp working directory
+        cd "/media/wolfe/4TBHDD/KernelTemp"
+
+        # Download Linux 4.4.0 kernel sources
+
+        apt-get source linux
+
+        # Change into Kernel Source directory
+
+        cd "linux-4.4.0"
+
+        # Copy config file
+
+        cp ../config.440 .config
+    
+        # Apply dma.h Patch
+
+        patch "/media/wolfe/4TBHDD/KernelTemp/linux-4.4.0/arch/x86/include/asm/dma.h" -i "/media/wolfe/4TBHDD/KernelTemp/dma.patch"
+
+        # Apply Emu10k1 Patch
+
+        patch "/media/wolfe/4TBHDD/KernelTemp/linux-4.4.0/sound/pci/emu10k1/emu10k1.c" -i "/media/wolfe/4TBHDD/KernelTemp/emu10k1.patch"
+
+        # Start Compiling Kernel
+
+        make deb-pkg -j6 LOCALVERSION=-2gb-pci-dma
+
+# End logic
+
+      elif [ $com = n -o $com = no ] 
+        then 
+            echo "Skipping Compiling the kernel"
+fi
+
+# Ask if user wants to install headers/image
+
+echo "Would you like to install Linux kernel and headers with dpkg?"
+read ins
+     if [ $ins = y -o $ins = yes ] 
+        then
+            cd "/media/wolfe/4TBHDD/KernelTemp"
+            sudo dpkg -i linux-headers-4.4*amd64.deb
+            sudo dpkg -i linux-image-4.4*amd64.deb
+    elif [ $ins = n -o $ins = no ] 
+        then
+            echo "Skipped installing Kernel and Headers"
+fi
+
+# Ask if user wants to remove source tree
+
+echo "Would you like to remove old source tree from compile?"
+read rem
+     if [ $rem = y -o $rem = yes ] 
+        then
+            rm -r "/media/wolfe/4TBHDD/KernelTemp/linux-4.4.0"
+    elif [ $rem = n -o $rem = no ] 
+        then
+            echo "Skipped remove source tree"
+fi
+
+# Close script
+
+exit
