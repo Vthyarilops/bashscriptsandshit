@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Grab sudo password so as not to make user wait forever
+sudo echo
+
 # Activate macros and colors
 #ff0000 = red
 #ff00ff = purple
