@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# Android SDK is required, on Arch install the Following AUR packages aswell as the package jdk8-openjdk
+#	git clone https://aur.archlinux.org/android-sdk.git && cd android-sdk && makepkg -si
+#	git clone https://aur.archlinux.org/android-sdk-build-tools.git && cd android-sdk && makepkg -si
+#	git clone https://aur.archlinux.org/android-sdk-platform-tools.git && cd android-sdk && makepkg -si
+#	sudo pacman -S jdk8-openjdk
+
+# Proceed to set the permissions correctly if you want to run as a regular user (or you can always run the sdk as root)
+#	sudo groupadd android-sdk
+#	sudo gpasswd -a ${USER} android-sdk
+#	sudo setfacl -R -m g:android-sdk:rwx /opt/android-sdk
+#	sudo setfacl -d -m g:android-sdk:rwX /opt/android-sdk 
+
+# You will then need to accept the licenses as follows (you will need to set JAVA_HOME variable first as seen below)
+#   export JAVA_HOME="/usr/lib/jvm/java-8-openjdk"
+#	/opt/android-sdk/tools/bin/sdkmanager  --licenses 
+
+
+
+# Export Envioronmental variables for Android SDK and OpenJDK 8 
+
+	export ANDROID_HOME=/opt/android-sdk
+	PATH=$PATH:$ANDROID_HOME/tools
+	PATH=$PATH:$ANDROID_HOME/platform-tools  
+	export JAVA_HOME="/usr/lib/jvm/java-8-openjdk"
+
+# Change to current working directory
+	
+	cd "${PWD}"
+
+# Clone Tuxguitar to Current working directory if folder "${PWD}/trunk/build-scripts/tuxguitar-android/" doesn't exist
+
+	if [ -d "${PWD}/trunk/build-scripts/tuxguitar-android/" ]
+	then :
+	else 
+	svn checkout svn://svn.code.sf.net/p/tuxguitar/code/trunk 
+	fi
+
+# Get older Gradle version to avoid deprication errors during compile if it doesn't exist in "${PWD}/gradle-2.14.1/"
+
+	if [ -d "${PWD}/gradle-2.14.1/" ]
+	then :
+	else
+	wget "https://services.gradle.org/distributions/gradle-2.14.1-bin.zip" && unzip "gradle-2.14.1-bin.zip"
+	fi
+
+# Add "maven { url 'https://maven.google.com' }" as the top repository in build.gradle to avoid dependency issues
+
+patch -p1 "${PWD}/trunk/build-scripts/tuxguitar-android/build.gradle" <<EOF
+--- build.gradle	2019-08-26 06:31:25.919062503 +0000
++++ build.gradle	2019-08-26 06:41:50.597985671 +0000
+@@ -2,6 +2,7 @@
+ 
+ buildscript {
+     repositories {
++	maven { url 'https://maven.google.com' }
+         jcenter()
+     }
+     dependencies {
+@@ -14,6 +15,7 @@
+ 
+ allprojects {
+     repositories {
++	maven { url 'https://maven.google.com' }
+         jcenter()
+     }
+ }
+EOF
+
+
+# Change to Tuxguitar Source Directory
+
+	cd "${PWD}/trunk/build-scripts/tuxguitar-android"
+
+# Call Gradle 2.14.1 and raise heap size to avoid compile errors
+
+	"${PWD}/gradle-2.14.1/bin/gradle" assembleRelease -D org.gradle.jvmargs=-Xmx1536M "$1"
+
+
+# If you didn't set the permissions to run this as a regular user chown the apk directory and the apk before moving it
+#	sudo chown -R "${USER}:${USER}" "${PWD}/trunk/build-scripts/tuxguitar-android/apk/build/outputs/apk/"
+#	sudo chown "${USER}:${USER}" "${PWD}/trunk/build-scripts/tuxguitar-android/apk/build/outputs/apk/*.apk"	
+
+
+# Output In ${PWD}/trunk/build-scripts/tuxguitar-android/apk/build/outputs/apk, copy it to current working directory
+
+	cp "${PWD}/trunk/build-scripts/tuxguitar-android/apk/build/outputs/apk/*.apk" .
+
+# Generate a signing key so you can install your app on an actual Android device
+# 	keytool -genkey -v -keystore release.keystore -alias tuxguitar -keyalg RSA -keysize 2048 -validity 10000
+
+# Zipalign the apk like so (replacing Input.apk and Output.apk obviously)
+# 	/opt/android-sdk/build-tools/27.0.3/zipalign -p 4 Input.apk Output.apk
+# Feel free to verify the alignment like
+# 	/opt/android-sdk/build-tools/27.0.3/zipalign -c 4 Output.apk
+
+# Finally Sign the APK with apksigner
+# 	/opt/android-sdk/build-tools/27.0.3/apksigner sign -ks release.keystore --ks-key-alias tuxguitar Output.apk
+# Also feel free to verify it signed correctly
+#	/opt/android-sdk/build-tools/27.0.3/apksigner verify --verbose Output.apk
+
+# Give a confirmation to the user that the apk is compiled
+	ls "${PWD}" | grep .apk | grep tuxguitar
+	echo "Your apk should be built and in the current working directory (The name of the .apk should be above)"
+
+exit
