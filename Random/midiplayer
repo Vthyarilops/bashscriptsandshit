@@ -86,55 +86,55 @@ do
 	esac
 done
 case "$1" in
-	    'magic')
-	    	shift
-		    CMD_ARGS="/usr/share/sounds/sf2/MagicSFver2.sf2 "
-		    ;;
-	    'fluidgm')
-		    shift
-	    	CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GM.sf2 "
-		    ;;
-	    'timidity')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/TimGM6mb.sf2 "
-            ;;
-	    'fluidgs')
-	        shift
-	        CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GS.sf2 "
-	        ;;
-	    'general')
-	        shift
-	        CMD_ARGS="/usr/share/sounds/sf2/GeneralUserGS_1471.sf2 "
-            ;;
-        'arachno')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/Arachno.sf2 "
-            ;;
-        'chorium')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/Chorium.sf2 "
-            ;;
-        'omega')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/Omega.sf2 "
-            ;;
-        'princess')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/Princess.sf2 "
-            ;;
-        '32mb')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/32Mb.sf2 "
-            ;;
-        'sf4u')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/Sf4UGM.sf2 "
-            ;;
-        'hqorch')
-            shift
-            CMD_ARGS="/usr/share/sounds/sf2/HQOrchestra.sf2 "
-            ;;
-	'heaven')
+    'magic')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/MagicSFver2.sf2 "
+        ;;
+    'fluidgm')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GM.sf2 "
+        ;;
+    'timidity')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/TimGM6mb.sf2 "
+        ;;
+    'fluidgs')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/FluidR3_GS.sf2 "
+        ;;
+    'general')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/GeneralUserGS_1471.sf2 "
+        ;;
+    'arachno')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/Arachno.sf2 "
+        ;;
+    'chorium')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/Chorium.sf2 "
+        ;;
+    'omega')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/Omega.sf2 "
+        ;;
+    'princess')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/Princess.sf2 "
+        ;;
+    '32mb')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/32Mb.sf2 "
+        ;;
+    'sf4u')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/Sf4UGM.sf2 "
+        ;;
+    'hqorch')
+        shift
+        CMD_ARGS="/usr/share/sounds/sf2/HQOrchestra.sf2 "
+        ;;
+    'heaven')
 		shift
 		CMD_ARGS="/usr/share/sounds/sf2/Heaven.sf2 "
 		;;
