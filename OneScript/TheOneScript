@@ -167,11 +167,11 @@ read res
 		if [ $BS = 1 -o $BS = y -o $BS = Y ] 
 			then 
 				echo "Installing base base-devel"
-				pacstrap -i /mnt base base-devel
+				pacstrap -i /mnt base base-devel linux linux-firmware
 		elif [ $BS = 2 -o $BS = base -o $BS = BASE ]
 			then	
 				echo "Installing base"
-				pacstrap -i /mnt base
+				pacstrap -i /mnt base linux linux-firmware
 		elif [ $BS = 3 -o $BS = n -o $BS = N ]
 			then
 				echo "Skipped installing Arch base system"		
