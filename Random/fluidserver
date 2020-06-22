@@ -184,7 +184,7 @@ case "$1" in
                 ;;
         'yamXG')
                 shift
-                CMD_ARGS=/usr/share/sounds/sf2/yamahaXG.sf2 "
+                CMD_ARGS="/usr/share/sounds/sf2/yamahaXG.sf2 "
                 ;;
         'sf2')
                 shift
